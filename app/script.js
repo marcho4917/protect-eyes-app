@@ -1,10 +1,15 @@
 import React from 'react';
 import { render } from 'react-dom';
 
+
+  const WORK = 'work';
+  const REST = 'rest';
+  const OFF = 'off';
+
 class App extends React.Component {
 
   state = {
-    status: 'off',
+    status: OFF,
     time: 1200,
     timer: null, 
   }
@@ -20,15 +25,15 @@ class App extends React.Component {
       time: this.state.time - 1,
     })
 
-    if( this.state.time == 0) {
-      if(this.state.status == 'work') {
+    if( this.state.time === 0) {
+      if(this.state.status === WORK) {
         this.setState({
-          status: 'rest',
+          status: REST,
           time: 20,
         });
-      } else if(this.state.status == 'rest') {
+      } else if(this.state.status === REST) {
         this.setState({
-          status: 'work',
+          status: WORK,
           time: 1200,
         });
       }
@@ -38,7 +43,7 @@ class App extends React.Component {
   startTimer = () => {
   
     this.setState({
-      status: 'work',
+      status: WORK,
       time: 1200,
       timer: setInterval(this.step, 1000),
     });
@@ -49,7 +54,7 @@ class App extends React.Component {
     clearInterval(this.state.timer);
     this.setState({
       time: 0,
-      status: 'off',
+      status: OFF,
     });
   };
 
@@ -57,18 +62,33 @@ class App extends React.Component {
     window.close();
   };
 
+  isOff = () => {
+    return this.state.status === OFF;
+  };
+
+  isNotOff = () => {
+    return this.state.status !== OFF;
+  };
+
+  isWork = () => {
+    return this.state.status === WORK;
+  };
+
+  isRest = () => {
+    return this.state.status === REST;
+  };
+
   render() {
-    const {status} = this.state;
     return (
       <div>
         <h1>Protect your eyes</h1>
-        {(status === 'off') && <div><p>According to optometrists in order to save your eyes, you should follow the 20/20/20. It means you should to rest your eyes every 20 minutes for 20 seconds by looking more than 20 feet away.</p>
+        {this.isOff() && <div><p>According to optometrists in order to save your eyes, you should follow the 20/20/20. It means you should to rest your eyes every 20 minutes for 20 seconds by looking more than 20 feet away.</p>
         <p>This app will help you track your time and inform you when it's time to rest.</p></div>}
-        {(status === 'work') && <img src="./images/work.png" />}
-        {(status === 'rest') && <img src="./images/rest.png" />}
-        {(status !== 'off') && <div className="timer">{this.formatTime(this.state.time)}</div>}
-        {(status === 'off') && <button onClick={this.startTimer} className="btn" >Start</button>}
-        {(status !== 'off') && <button onClick={this.stopTimer} className="btn">Stop</button>}
+        {this.isWork() && <img src="./images/work.png" />}
+        {this.isRest() && <img src="./images/rest.png" />}
+        {this.isNotOff() && <div className="timer">{this.formatTime(this.state.time)}</div>}
+        {this.isOff() && <button onClick={this.startTimer} className="btn" >Start</button>}
+        {this.isNotOff() && <button onClick={this.stopTimer} className="btn" >Stop</button>}
         <button onClick={this.closeApp} className="btn btn-close">X</button>
       </div>
     )
